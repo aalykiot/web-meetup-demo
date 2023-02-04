@@ -1,0 +1,25 @@
+{
+  "name": "web-meetup-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "populate:db": "node -r dotenv/config src/scripts/populate.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fastify": "^4.12.0",
+    "pg": "^8.9.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "all-the-package-names": "^2.0.595",
+    "cli-progress": "^3.11.2",
+    "nodemon": "^2.0.20"
+  }
+}
