@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Meetup - Performance Profiling of Node.js Applications</title>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h3>Performance Profiling of Node.js Applications</h3>
+          <h4>Using Node-Clinic</h4>
+        </section>
+        <section>
+          <h3>Why our app is slow? 🤔</h3>
+          <img
+            src="https://media0.giphy.com/media/3og0INAY5MLmEBubyU/giphy.gif?cid=ecf05e47ghpzxd2j6a139kgf6uho2mjwwrlti6dvulgec4m3&rid=giphy.gif&ct=g"
+            width="700"
+          />
+        </section>
+        <section>
+          <div style="text-align: left">
+            <h3>Internal Bottlenecks</h3>
+            <p>The Node.js process is on fire 🔥</p>
+          </div>
+          <div style="text-align: left; margin-top: 80px">
+            <h3>External Bottlenecks</h3>
+            <p>Something else is slowing us down 🐢</p>
+          </div>
+        </section>
+        <section>
+          <h2>Finding Performance Bottlenecks</h2>
+          <p class="fragment">Performance Issue</p>
+          <p class="fragment">Diagnostics</p>
+          <p class="fragment">Reproduce in Non-Production Environment</p>
+          <p class="fragment">More Diagnostics</p>
+          <p class="fragment">Stare at screen confused...😵‍💫</p>
+        </section>
+        <section>
+          <h2>Autocannon</h2>
+          <p>An HTTP/1.1 benchmarking tool written in node.</p>
+          <pre><code data-trim data-noescape class="shell">$ npm i autocannon -g</code></pre>
+          <img
+            src="https://raw.githubusercontent.com/mcollina/autocannon/master/demo.gif"
+            width="500"
+          />
+        </section>
+        <section>
+          <h2>Diagnostics</h2>
+          <p>A Node.js performance profiling suite.</p>
+          <pre><code data-trim data-noescape class="shell">$ npm i clinic -g</code></pre>
+          <div
+            style="
+              display: flex;
+              justify-content: space-around;
+              padding-top: 50px;
+            "
+          >
+            <div
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <svg width="200" viewBox="0 0 64 64" fill="#39d678">
+                <defs>
+                  <clipPath id="2x6jl4h">
+                    <rect x="3.42" y="1" width="57.16" height="62"></rect>
+                  </clipPath>
+                </defs>
+                <g style="clip-path: url('#2x6jl4h')">
+                  <path
+                    d="M4.39,38H18.33l5-21.88a2.43,2.43,0,0,1,4.77.23l4.16,31.6,4-19.75A2.42,2.42,0,0,1,41,27.92l3.07,10h16.4a167,167,0,0,0-.23-16.74A8.58,8.58,0,0,0,56,14.75C48.93,10.42,42,6,35.45,2a6.38,6.38,0,0,0-6.9,0C22,6,15.07,10.45,8,14.75a8.63,8.63,0,0,0-4.21,6.46,166.51,166.51,0,0,0-.22,17A1.45,1.45,0,0,1,4.39,38Z"
+                  ></path>
+                  <path
+                    d="M43.7,40.85a2.39,2.39,0,0,1-2.31-1.71L38.77,30.6,34.56,51.32a2.38,2.38,0,0,1-2.37,1.94H32.1a2.37,2.37,0,0,1-2.31-2.1L25.6,19.34,21.07,39a2.4,2.4,0,0,1-2.36,1.87H4.39a1.46,1.46,0,0,1-.72-.19c0,.71.06,1.42.1,2.13A8.58,8.58,0,0,0,8,49.25C15.07,53.55,22,58,28.55,62a6.38,6.38,0,0,0,6.9,0C42,58,48.93,53.55,56,49.25a8.5,8.5,0,0,0,4.21-6.46c0-.65.06-1.29.09-1.94Z"
+                  ></path>
+                </g>
+              </svg>
+              <div style="margin-top: 20px; font-size: 20pt">Clinic Doctor</div>
+            </div>
+            <div
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <svg viewBox="0 0 64 64" fill="#39bad6" width="200">
+                <defs>
+                  <clipPath id="cfhgk7jd">
+                    <rect x="3.42" y="1" width="57.16" height="62"></rect>
+                  </clipPath>
+                </defs>
+                <g style="clip-path: url('#cfhgk7jd')">
+                  <circle cx="28.12" cy="25.7" r="9.69"></circle>
+                  <circle cx="41.2" cy="43.62" r="2.42"></circle>
+                  <path
+                    d="M60.23,21.21A8.58,8.58,0,0,0,56,14.75C48.93,10.42,42,6,35.45,2a6.38,6.38,0,0,0-6.9,0C22,6,15.07,10.45,8,14.75a8.63,8.63,0,0,0-4.21,6.46,165.32,165.32,0,0,0,0,21.58A8.58,8.58,0,0,0,8,49.25C15.07,53.55,22,58,28.55,62a6.38,6.38,0,0,0,6.9,0C42,58,48.93,53.55,56,49.25a8.5,8.5,0,0,0,4.21-6.46A165.32,165.32,0,0,0,60.23,21.21ZM28.12,38.3a12.6,12.6,0,1,1,12.6-12.6A12.61,12.61,0,0,1,28.12,38.3ZM41.2,49a5.33,5.33,0,1,1,5.33-5.33A5.34,5.34,0,0,1,41.2,49Z"
+                  ></path>
+                </g>
+              </svg>
+              <div style="margin-top: 20px; font-size: 20pt">
+                Clinic Bubbleprof
+              </div>
+            </div>
+            <div
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <svg viewBox="0 0 64 64" fill="#ffaa2b" width="200">
+                <path
+                  d="M61.23,21.21A8.58,8.58,0,0,0,57,14.75C49.93,10.42,43,6,36.45,2a6.38,6.38,0,0,0-6.9,0C23,6,16.07,10.45,9,14.75a8.63,8.63,0,0,0-4.21,6.46,165.32,165.32,0,0,0,0,21.58A8.58,8.58,0,0,0,9,49.25C16.07,53.55,23,58,29.55,62a6.38,6.38,0,0,0,6.9,0C43,58,49.93,53.55,57,49.25a8.5,8.5,0,0,0,4.21-6.46A165.32,165.32,0,0,0,61.23,21.21Zm-21-2.77H42.2a1.45,1.45,0,1,1,0,2.9H40.26a1.45,1.45,0,1,1,0-2.9Zm0,5.81h5.82a1.46,1.46,0,0,1,0,2.91H40.26a1.46,1.46,0,0,1,0-2.91Zm0,5.81h5.82a1.46,1.46,0,0,1,0,2.91H40.26a1.46,1.46,0,0,1,0-2.91Zm0,5.81H49a1.46,1.46,0,1,1,0,2.91H40.26a1.46,1.46,0,0,1,0-2.91ZM16.05,24.25h3.87a1.46,1.46,0,0,1,0,2.91H16.05a1.46,1.46,0,1,1,0-2.91Zm0,5.81H27.67a1.46,1.46,0,0,1,0,2.91H16.05a1.46,1.46,0,1,1,0-2.91Zm0,5.81H32.51a1.46,1.46,0,1,1,0,2.91H16.05a1.46,1.46,0,1,1,0-2.91ZM49,44.59H16.05a1.45,1.45,0,1,1,0-2.9H49a1.45,1.45,0,1,1,0,2.9Z"
+                ></path>
+              </svg>
+              <div style="margin-top: 20px; font-size: 20pt">Clinic Flame</div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h2>Clinic Doctor</h2>
+          <p>
+            Collects metrics by
+            <span style="color: red">injecting probes</span>.
+          </p>
+          <p>
+            Assesses health using
+            <span style="color: red">heuristics</span>.
+          </p>
+          <p>
+            Creates
+            <span style="color: red">recommendations</span>. 😀
+          </p>
+        </section>
+        <section>
+          <section>
+            <h2>Clinic Bubbleprof</h2>
+            <p>
+              Collects metrics using
+              <span style="color: red">async_hooks</span>.
+            </p>
+            <p>
+              Tracks
+              <span style="color: red">latency</span> between operations.
+            </p>
+            <p>
+              Creates
+              <span style="color: red">bubble graphs</span>.
+            </p>
+          </section>
+          <section>
+            <h2>Async Hooks</h2>
+            <pre><code data-trim data-noescape class="javascript">
+              const async_hooks = require('async_hooks');
+
+              const asyncHook = async_hooks.createHook({
+                init: function (asyncId, type, triggerAsyncId, resource) { },
+                before: function (asyncId) { },
+                after: function (asyncId) { },
+                destroy: function (asyncId) { },
+                promiseResolve: function (asyncId) { }
+              });
+
+              asyncHook.enable();
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Clinic Flame</h2>
+            <p>
+              Collects metrics by
+              <span style="color: red">CPU sampling</span>.
+            </p>
+            <p>
+              Tracks
+              <span style="color: red">top-of-stack</span> frequency.
+            </p>
+            <p>
+              Creates
+              <span style="color: red">flame graphs</span>.
+            </p>
+          </section>
+          <section>
+            <h2>Flame Graphs</h2>
+            <img
+              src="https://www.brendangregg.com/FlameGraphs/cpu-mysql-filt.png"
+              width="800"
+            />
+          </section>
+        </section>
+        <section>
+          <h1>DEMO TIME 🤞</h1>
+        </section>
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
