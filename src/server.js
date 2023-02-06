@@ -26,7 +26,10 @@ server.get('/search/:term', async (request, reply) => {
     [`%${term}%`]
   );
 
-  const packages = computeHash(newestPackages, oldestPackages);
+  const packages = await Promise.all(
+    computeHash(newestPackages, oldestPackages)
+  );
+
   reply.send(packages);
 });
 
@@ -34,8 +37,11 @@ function computeHash(newestPackages, oldestPackages) {
   return [...newestPackages, ...oldestPackages]
     .map((row) => row['package_name'])
     .map((name) => {
-      const hash = crypto.pbkdf2Sync(name, 'MY_SALT', 2000, 32, 'sha512');
-      return `${name} |> ${hash.toString('hex')}`;
+      return new Promise((resolve) => {
+        crypto.pbkdf2(name, 'MY_SALT', 2000, 32, 'sha512', (_, hash) => {
+          resolve(`${name} |> ${hash.toString('hex')}`);
+        });
+      });
     });
 }
 
