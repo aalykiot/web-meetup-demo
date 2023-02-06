@@ -11,6 +11,16 @@ services:
     volumes: 
       - db:/var/lib/postgresql/data
       - ./schema/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - cache:/data
 volumes:
   db:
+    driver: local
+  cache:
     driver: local

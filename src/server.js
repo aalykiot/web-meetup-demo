@@ -39,16 +39,4 @@ function computeHash(newestPackages, oldestPackages) {
     });
 }
 
-// function computeHash(newestPackages, oldestPackages) {
-//   return [...newestPackages, ...oldestPackages]
-//     .map((row) => row['package_name'])
-//     .map((name) => {
-//       return new Promise((resolve) => {
-//         crypto.pbkdf2(name, 'MY_SALT', 2000, 32, 'sha512', (_, hash) => {
-//           resolve(`${name} |> ${hash.toString('hex')}`);
-//         });
-//       });
-//     });
-// }
-
 module.exports = server;
