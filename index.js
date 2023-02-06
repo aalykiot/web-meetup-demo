@@ -1,10 +1,12 @@
 require('dotenv').config();
 const server = require('./src/server');
-const { init } = require('./src/db');
+const { init: dbInit } = require('./src/db');
+const { init: cacheInit } = require('./src/cache');
 
 async function start() {
   try {
-    await init();
+    await dbInit();
+    await cacheInit();
     await server.listen({ port: 3000 });
   } catch (e) {
     console.log(e);
@@ -13,7 +15,3 @@ async function start() {
 }
 
 start();
-
-/**
- * clinic doctor --on-port 'autocannon -c5 -d10 http://localhost:$PORT/search/react' -- node index.js
- */

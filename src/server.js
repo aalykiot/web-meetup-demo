@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const fastify = require('fastify');
-const { client } = require('./db');
+const { client: db } = require('./db');
+const { client: cache } = require('./cache');
 
 const server = fastify();
 
@@ -14,14 +15,22 @@ server.get('/search/:term', async (request, reply) => {
     return;
   }
 
+  // Check cache for speed.
+  const cachedPackages = await cache.get(term);
+
+  if (cachedPackages) {
+    reply.send(JSON.parse(cachedPackages));
+    return;
+  }
+
   // Get newest packages that includes `term` word.
-  const { rows: newestPackages } = await client.query(
+  const { rows: newestPackages } = await db.query(
     'SELECT * FROM npm WHERE package_name LIKE $1 ORDER BY published DESC LIMIT 10',
     [`%${term}%`]
   );
 
   // Get oldest packages that includes `term` word.
-  const { rows: oldestPackages } = await client.query(
+  const { rows: oldestPackages } = await db.query(
     'SELECT * FROM npm WHERE package_name LIKE $1 ORDER BY published ASC LIMIT 10',
     [`%${term}%`]
   );
@@ -30,6 +39,8 @@ server.get('/search/:term', async (request, reply) => {
     computeHash(newestPackages, oldestPackages)
   );
 
+  // Update cache.
+  await cache.set(term, JSON.stringify(packages));
   reply.send(packages);
 });
 

@@ -2,10 +2,10 @@ const pg = require('pg');
 const config = require('./config');
 
 const client = new pg.Client({
-  host: config.host,
-  port: config.port,
-  user: config.user,
-  password: config.password
+  host: config.db.host,
+  port: config.db.port,
+  user: config.db.user,
+  password: config.db.password
 });
 
 const init = async () => await client.connect();
