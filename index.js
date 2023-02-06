@@ -13,7 +13,3 @@ async function start() {
 }
 
 start();
-
-/**
- * clinic doctor --on-port 'autocannon -c5 -d10 http://localhost:$PORT/search/react' -- node index.js
- */
